@@ -283,7 +283,7 @@ if input_img is not None:
             st.write(f"**Diagnostic Confidence:** `{confidence * 100:.2f}%`")
             st.write("**Clinical Feature:** Continuous hyperechoic elevated membrane structure detected across vitreous space.")
         else:
-            st.success("### ✅ Diagnosis: NORMAL / UNREMARKABLE")
+            st.success("###  Diagnosis: NORMAL / UNREMARKABLE")
             st.write(f"**Diagnostic Confidence:** `{confidence * 100:.2f}%`")
             st.write("**Clinical Feature:** Intact posterior anatomical wall; absence of pathological acoustic reflections.")
 
@@ -333,6 +333,7 @@ if input_img is not None:
             ax.set_title('Validation Confusion Matrix', fontsize=12, fontweight='bold')
             st.pyplot(fig)
             plt.close(fig)
+            
 
         with bench_col2:
             st.markdown("#### Performance Evaluation Table")
