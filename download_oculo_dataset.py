@@ -3,12 +3,12 @@ import shutil
 import time
 import pandas as pd
 
-# Suppress HF symlink warning on Windows
+
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
 
 from huggingface_hub import hf_hub_download
 
-# 1. Prepare target directories
+
 output_dir = "raw_dataset"
 normal_dir = os.path.join(output_dir, "normal")
 rd_dir = os.path.join(output_dir, "retinal_detachment")
@@ -25,11 +25,10 @@ except Exception as e:
     print(f"Error fetching data.csv: {e}", flush=True)
     exit(1)
 
-# Categorize dataset records
-# Retinal Detachment: retinal_detachment == 1
+
 rd_df = df[df['retinal_detachment'] == 1]
 
-# Normal / Healthy: diagnosis == 0 and all pathology flags == 0
+
 pathology_cols = [
     'vitreous_dot_echo', 'abnormal_contour', 'membranous_echo',
     'posterior_vitreous_detachment', 'retinal_detachment',
@@ -39,7 +38,7 @@ normal_df = df[(df['diagnosis'] == 0) & (df[pathology_cols] == 0).all(axis=1)]
 
 print(f"Found {len(rd_df)} Retinal Detachment records and {len(normal_df)} Normal/Healthy records.", flush=True)
 
-# Target limit per class (set to 100 as requested, or set to None to extract all)
+
 TARGET_COUNT = 100 
 
 rd_subset = rd_df.head(TARGET_COUNT) if TARGET_COUNT else rd_df
@@ -56,14 +55,14 @@ def download_and_save_images(records, target_folder, category_label, prefix):
         count += 1
         out_filepath = os.path.join(target_folder, f"{prefix}_{count:04d}.png")
         
-        # Download or retrieve from local cache
+       
         try:
             local_cached_path = hf_hub_download(
                 repo_id="SankaraEyeHospital/Oculo",
                 filename=img_filename,
                 repo_type="dataset"
             )
-            # Copy image to target directory
+         
             shutil.copy(local_cached_path, out_filepath)
             print(f" [{count}/{total}] Saved {out_filepath}", flush=True)
         except Exception as e:
@@ -84,4 +83,4 @@ print(f"Normal / Healthy scans collected:    {normal_saved}", flush=True)
 print(f"Retinal Detachment scans collected: {rd_saved}", flush=True)
 print(f"Files saved in:                     {os.path.abspath(output_dir)}", flush=True)
 print("="*50, flush=True)
-
+

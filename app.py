@@ -176,13 +176,13 @@ with a **Project Trained ResNet-18 Deep Learning Model** (`ocular_classifier_mod
 st.divider()
 
 # --- SIDEBAR CONTROLS ---
-st.sidebar.header("📁 B-Scan Ultrasound Input")
+st.sidebar.header(" B-Scan Ultrasound Input")
 
 # Display Project Model Status in Sidebar
 if is_model_loaded:
-    st.sidebar.success(f"🟢 **Project Model Loaded**\n`{MODEL_FILENAME}`")
+    st.sidebar.success(f"**Project Model Loaded**\n`{MODEL_FILENAME}`")
 else:
-    st.sidebar.error(f"🔴 **Project Model File Missing**\nPlease run `train_classifier.py` to generate `{MODEL_FILENAME}`.")
+    st.sidebar.error(f"**Project Model File Missing**\nPlease run `train_classifier.py` to generate `{MODEL_FILENAME}`.")
 
 st.sidebar.subheader("Select Input Source")
 input_option = st.sidebar.radio("Choose scan source:", ["Upload Custom Image", "Sample Retinal Detachment Scan", "Sample Normal Scan"])
@@ -251,7 +251,7 @@ if input_img is not None:
         st.image(dsp_steps["step5_enhanced"], caption="Step 5: Final Enhanced Scan (k = 1.2)", use_container_width=True)
 
     # Accordion for Mathematical & DSP Technical Details
-    with st.expander("🔍 Click to view MATLAB Mathematical Equations & Algorithm Details"):
+    with st.expander(" Click to view MATLAB Mathematical Equations & Algorithm Details"):
         st.markdown(r"""
         ### MATLAB Processing Formulations (`preprocess_dataset.m` / `run_matlab_dsp_pipeline.py`):
         1. **Grayscale Normalization:**
@@ -297,7 +297,7 @@ if input_img is not None:
 
     st.divider()
 
-    # --- SECTION 3: MODEL VALIDATION, CONFUSION MATRIX & EVALUATION METRICS ---
+    #  MODEL VALIDATION, CONFUSION MATRIX & EVALUATION METRICS ---
     st.subheader("3. Project Model Evaluation Metrics & Confusion Matrix")
     st.caption("Quantitative system validation of the project model (`ocular_classifier_model.pth`) across the independent validation dataset.")
 
@@ -316,7 +316,7 @@ if input_img is not None:
 
         with bench_col1:
             st.markdown("#### Clinical Confusion Matrix")
-            # Render Seaborn confusion matrix plot dynamically
+            
             fig, ax = plt.subplots(figsize=(5.5, 4.5))
             sns.heatmap(
                 eval_data['cm'], 
@@ -340,16 +340,16 @@ if input_img is not None:
             st.markdown(f"""
             | Performance Metric | Measured Value | Target Clinical Threshold | Status |
             | :--- | :--- | :--- | :--- |
-            | **Overall Accuracy** | **{eval_data['acc']*100:.2f}%** | > 90.0% | ✅ Passed |
-            | **Sensitivity (Recall)** | **{eval_data['rec']*100:.2f}%** | > 92.0% | ✅ Passed |
-            | **Specificity** | **{eval_data['spec']*100:.2f}%** | > 90.0% | ✅ Passed |
-            | **Precision** | **{eval_data['prec']*100:.2f}%** | > 90.0% | ✅ Passed |
-            | **F1-Score** | **{eval_data['f1']:.4f}** | > 0.90 | ✅ Passed |
+            | **Overall Accuracy** | **{eval_data['acc']*100:.2f}%** | > 90.0% |  Passed |
+            | **Sensitivity (Recall)** | **{eval_data['rec']*100:.2f}%** | > 92.0% |  Passed |
+            | **Specificity** | **{eval_data['spec']*100:.2f}%** | > 90.0% |  Passed |
+            | **Precision** | **{eval_data['prec']*100:.2f}%** | > 90.0% |  Passed |
+            | **F1-Score** | **{eval_data['f1']:.4f}** | > 0.90 |  Passed |
             | **Evaluated Samples** | **{eval_data['total']} Scans** | Validation Set | Verified |
             """)
 
             # Detailed Classification Breakdown
-            with st.expander("📊 View Per-Class Metrics Breakdown"):
+            with st.expander(" View Per-Class Metrics Breakdown"):
                 report_df = {
                     "Class": ["Normal", "Retinal Detachment"],
                     "Precision": [f"{eval_data['report']['normal']['precision']*100:.2f}%", f"{eval_data['report']['retinal_detachment']['precision']*100:.2f}%"],
@@ -360,7 +360,7 @@ if input_img is not None:
                 st.dataframe(report_df, use_container_width=True)
 
     else:
-        # Fallback if validation directory is not available
+       
         bench_col1, bench_col2 = st.columns([1, 1])
         with bench_col1:
             if os.path.exists(os.path.join(PROJECT_DIR, 'confusion_matrix.png')):
@@ -379,4 +379,4 @@ if input_img is not None:
             """)
 
 else:
-    st.info("👈 Upload an ocular B-scan ultrasound image or select a sample scan via the sidebar to start the analysis.")
+    st.info(" Upload an ocular B-scan ultrasound image or select a sample scan via the sidebar to start the analysis.")
