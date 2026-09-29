@@ -54,36 +54,31 @@ def run_matlab_dsp_pipeline(pil_img):
     Replicates the exact MATLAB preprocessing pipeline step-by-step as defined in preprocess_dataset.m.
     Returns intermediate images after EACH processing step.
     """
-    # Step 0: Raw Input Image
+ 
     raw_rgb = pil_img.convert('RGB')
     raw_np = np.array(raw_rgb)
     
-    # Convert to Grayscale & Double Precision [0.0, 1.0] (MATLAB imread + double / 255.0)
+
     img_gray = cv2.cvtColor(raw_np, cv2.COLOR_RGB2GRAY)
     I_norm = img_gray.astype(np.float64) / 255.0
     step1_gray = (I_norm * 255.0).astype(np.uint8)
 
-    # Step 2: 2D Low-Pass Gaussian Filtering (Speckle Noise Removal)
-    # MATLAB: 5x5 Gaussian Kernel (sigma = 1.5) with replicate padding
+
     I_denoised = cv2.GaussianBlur(I_norm, (5, 5), sigmaX=1.5, sigmaY=1.5, borderType=cv2.BORDER_REPLICATE)
     step2_denoised = (I_denoised * 255.0).astype(np.uint8)
 
-    # Step 3: Secondary Low-Pass Gaussian Blur for Unsharp Masking
-    # MATLAB: 9x9 Gaussian Kernel (sigma = 2.0) with replicate padding
     I_blur = cv2.GaussianBlur(I_denoised, (9, 9), sigmaX=2.0, sigmaY=2.0, borderType=cv2.BORDER_REPLICATE)
     step3_blur = (I_blur * 255.0).astype(np.uint8)
 
-    # Step 4: High-Pass Spatial Boundary Mask (I_mask = I_denoised - I_blur)
+   
     I_mask = I_denoised - I_blur
-    # Normalize mask around 128 for visual display of high-frequency edge details
-    step4_mask = np.clip((I_mask + 0.5) * 255.0, 0, 255).astype(np.uint8)
 
-    # Step 5: Final Unsharp Masking Enhancement (I_enhanced = I_denoised + 1.2 * I_mask)
+    step4_mask = np.clip((I_mask + 0.5) * 255.0, 0, 255).astype(np.uint8)
     I_enhanced = I_denoised + 1.2 * I_mask
     I_enhanced = np.clip(I_enhanced, 0.0, 1.0)
     step5_enhanced = (I_enhanced * 255.0).astype(np.uint8)
 
-    # Convert final enhanced image to RGB PIL Image for ML model ingestion
+ 
     enhanced_rgb = cv2.cvtColor(step5_enhanced, cv2.COLOR_GRAY2RGB)
     enhanced_pil = Image.fromarray(enhanced_rgb)
 
